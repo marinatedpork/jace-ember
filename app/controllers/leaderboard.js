@@ -8,17 +8,18 @@ export default Controller.extend({
 	}),
   actions: {
     toggleIsRating(user) {
+      var wasRating = user.get('isRating');
       this.get('model').setEach('isRating', false);
-      user.set('isRating', true);
+      if (!wasRating) {
+        user.set('isRating', true);
+      }
     },
     rate(user) {
-      console.log(user);
-      let point = this.store.createRecord('point', {
+      this.store.createRecord('point', {
         receiver: user,
         type: 'regular',
         value: 1
-      });
-      point.save();
+      }).save();
     }
   }
 });
