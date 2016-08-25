@@ -33,13 +33,21 @@ export default Controller.extend({
   actions: {
     toggleIsRating(user) {
       var wasRating = user.get('isRating');
+      this.get('model').setEach('isViewing', false);
       this.get('model').setEach('isRating', false);
       if (!wasRating) {
         user.set('isRating', true);
       }
     },
+    view(user) {
+      var wasViewing = user.get('isViewing');
+      this.get('model').setEach('isViewing', false);
+      if (!wasViewing) {
+        user.set('isViewing', true);
+      }
+    },
     brost(user) {
-      
+
     },
     badge(user) {
       let { store, mobile } = this;
