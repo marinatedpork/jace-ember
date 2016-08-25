@@ -13,6 +13,7 @@
           {{#liquid-if user.isRating}}
             {{rating-list-item
               user=user
+              badge=(action "badge")
               rate=(action "rate")
             }}
           {{/liquid-if}}

@@ -14,6 +14,25 @@ export default Controller.extend({
         user.set('isRating', true);
       }
     },
+    brost(user) {
+      
+    },
+    badge(user) {
+      let { store, mobile } = this;
+      let app = mobile.get('app');
+      app.prompt('this outta be good...', `Giving a badge?`,
+        (reason) => {
+          store.createRecord('point', {
+            receiver: user,
+            type: 'badge',
+            value: 10,
+            reason: reason
+          }).save().then(() => {
+            app.alert(`${reason} badge given!`, 'Sweet! Done.');
+          });
+        }
+      );
+    },
     rate(user) {
       this.store.createRecord('point', {
         receiver: user,

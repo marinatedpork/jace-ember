@@ -1,9 +1,11 @@
+import Ember from 'ember';
+
 export function initialize(application) {
   var app = new Framework7({
     activeState: true,
     activeStateElements: 'li.item-content'
   });
-  var mobile = Ember.Object.extend({ app })
+  var mobile = Ember.Object.extend({ app });
   application.register('mobile:main', mobile);
   ['controller', 'route', 'component'].forEach((s) => {
     application.inject(s, 'mobile', 'mobile:main');
