@@ -9,7 +9,11 @@ li.item-content.active-state {
 }
 
 .amber {
-	background-color: #ffc107;
+  background-color: #ffc107;
+}
+
+.amber-text {
+	color: #ffc107;
 }
 
 .lightgreen {
@@ -18,4 +22,17 @@ li.item-content.active-state {
 
 .green {
 	background-color: #4caf50;
+}
+
+.silver {
+  color: #cccccc;
+}
+
+.trophy-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.trophy {
+  margin: 2.5px;
 }

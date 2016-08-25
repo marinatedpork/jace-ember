@@ -19,5 +19,6 @@ export default Model.extend({
 	numberOfRegularPoints: alias('points.length'),
 	pointValues: mapBy('points', 'value'),
 	overallScore: sum('pointValues'),
-  isRating: attr('boolean', { defaultValue: false })
+  isRating: attr('boolean', { defaultValue: false }),
+  isViewing: attr('boolean', { defaultValue: false }),
 });
