@@ -16,9 +16,9 @@ export default Model.extend({
 	brosties: filterBy('points', 'type', 'brosty'),
 	numberOfBadges: alias('badges.length'),
 	numberOfBrosties: alias('brosties.length'),
-	numberOfRegularPoints: alias('points.length'),
+	numberOfRegularPoints: alias('regularPoints.length'),
 	pointValues: mapBy('points', 'value'),
 	overallScore: sum('pointValues'),
   isRating: attr('boolean', { defaultValue: false }),
-  isViewing: attr('boolean', { defaultValue: false }),
+  isViewing: attr('boolean', { defaultValue: false })
 });

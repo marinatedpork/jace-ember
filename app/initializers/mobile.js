@@ -3,7 +3,7 @@ import Ember from 'ember';
 export function initialize(application) {
   var app = new Framework7({
     activeState: true,
-    activeStateElements: 'li.item-content'
+    activeStateElements: 'li.item-content button'
   });
   var mobile = Ember.Object.extend({ app });
   application.register('mobile:main', mobile);

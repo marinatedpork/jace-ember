@@ -25,7 +25,7 @@ li.item-content.active-state {
 }
 
 .silver-text {
-  color: #cccccc;
+  color: #7d7d7d;
 }
 
 .silver {
@@ -38,7 +38,12 @@ li.item-content.active-state {
 }
 
 .trophy {
-  margin: 2.5px;
+  margin: 4px;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 4px;
+  background-color: #bbbaba;
+  color: white;
 }
 
 .bronze-text {
@@ -47,4 +52,17 @@ li.item-content.active-state {
 
 .bronze {
   background-color: #cd7f32;
+}
+
+.card-footer {
+  font-size: 18px;
+}
+
+.item-content {
+  font-size: 20px;
+}
+
+.badge {
+  margin-left: 2.5px;
+  margin-right: 2.5px;
 }
