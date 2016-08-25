@@ -15,7 +15,7 @@ export default Model.extend({
 	badges: filterBy('points', 'type', 'badge'),
 	brosties: filterBy('points', 'type', 'brosty'),
 	numberOfBadges: alias('badges.length'),
-	numberOfBrosties: alias('brosty.length'),
+	numberOfBrosties: alias('brosties.length'),
 	numberOfRegularPoints: alias('points.length'),
 	pointValues: mapBy('points', 'value'),
 	overallScore: sum('pointValues'),

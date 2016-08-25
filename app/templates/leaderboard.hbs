@@ -1,36 +1,39 @@
 <div class="page">
 	<div class="page-content">
 	  <div class="content-block-title">LEADERBOARD</div>
-		<div class="list-block">
+		<div class="list-block users">
 		  <ul>
-				{{#each leaders as |user i|}}
-          {{user-list-item
-            i=i
-            user=user
-            toggleIsRating=(action "toggleIsRating")
-            isRating=user.isRating
-          }}
-          {{#liquid-if user.isRating}}
-            {{rating-list-item
+        {{#liquid-bind leaders use="crossFade" as |liquidLeaders|}}
+  				{{#each liquidLeaders as |user i|}}
+            {{user-list-item
+              i=i
               user=user
-              view=(action "view" user)
-              badge=(action "badge")
-              rate=(action "rate")
+              toggleIsRating=(action "toggleIsRating")
+              isRating=user.isRating
             }}
-          {{/liquid-if}}
-          {{#liquid-if user.isViewing}}
-            <div class="card">
-              <div class="card-content">
-                <div class="card-content-inner trophy-container">
-                {{#each user.badges as |badge|}}
-                  {{rating-list-item-badge classNames="trophy" badge=badge}}
-                {{/each}}
+            {{#liquid-if user.isRating}}
+              {{rating-list-item
+                user=user
+                view=(action "view" user)
+                badge=(action "badge")
+                rate=(action "rate")
+              }}
+            {{/liquid-if}}
+            {{#liquid-if user.isViewing}}
+              <div class="card">
+                <div class="card-content">
+                  <div class="card-content-inner trophy-container">
+                  {{#each user.badges as |badge|}}
+                    {{rating-list-item-badge classNames="trophy" badge=badge}}
+                  {{/each}}
+                  </div>
                 </div>
+                <div class="card-footer"><span>{{fa-icon "trophy" classNames="amber-text" size="lg"}} {{user.numberOfBrosties}} Brosties</span></div>
+                <div class="card-footer"><span>{{fa-icon "diamond" classNames="silver-text" size="lg"}} {{user.overallScore}} Total points</span></div>
               </div>
-              <div class="card-footer">{{user.numberOfBrosties}} {{fa-icon "trophy" classNames="amber-text" size="lg"}}</div>
-            </div>
-          {{/liquid-if}}
-				{{/each}}
+            {{/liquid-if}}
+  				{{/each}}
+        {{/liquid-bind}}
 		  </ul>
 		</div>
 	</div>
