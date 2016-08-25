@@ -24,8 +24,12 @@ li.item-content.active-state {
 	background-color: #4caf50;
 }
 
-.silver {
+.silver-text {
   color: #cccccc;
+}
+
+.silver {
+  background-color: #cccccc;
 }
 
 .trophy-container {
@@ -35,4 +39,12 @@ li.item-content.active-state {
 
 .trophy {
   margin: 2.5px;
+}
+
+.bronze-text {
+  color: #cd7f32;
+}
+
+.bronze {
+  background-color: #cd7f32;
 }

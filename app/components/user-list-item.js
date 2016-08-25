@@ -4,7 +4,7 @@ const { Component } = Ember;
 
 export default Component.extend({
   classNames: ['item-content'],
-  classNameBindings: ['isRating:green'],
+  classNameBindings: ['isRating'],
   tagName: 'li',
   click() {
     this.get('toggleIsRating')(this.get('user'));

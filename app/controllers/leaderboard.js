@@ -10,14 +10,16 @@ export default Controller.extend({
 
     var subscription = consumer.subscriptions.create("PointsChannel", {
       received: (data) => {
-        let { id, receiver_id, giver_id, point_type, value } = JSON.parse(data.point);
+
+        let { id, receiver_id, giver_id, point_type, value, reason } = JSON.parse(data.point);
         let user = this.store.peekRecord('user', receiver_id);
         let point = this.store.createRecord('point', {
           id: id,
           receiver: receiver_id,
           giver: giver_id,
+          reason,
           type: point_type,
-          value: value
+          value
         });
         user.get('points').pushObject(point);
       }
@@ -51,22 +53,26 @@ export default Controller.extend({
     },
     badge(user) {
       let { store, mobile } = this;
-      let app = mobile.get('app');
-      app.prompt('this outta be good...', `Giving a badge?`,
+      let subscription = this.get('subscription');
+      mobile.get('app').prompt('this outta be good...', `Giving a badge?`,
         (reason) => {
-          store.createRecord('point', {
-            receiver: user,
+          mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
+          subscription.send({
+            receiver: user.get('id'),
             type: 'badge',
             value: 10,
             reason: reason
-          }).save().then(() => {
-            app.alert(`${reason} badge given!`, 'Sweet! Done.');
           });
         }
       );
     },
     rate(user) {
-      this.get('subscription').send({ receiver: user.get('id'), type: 'regular', value: 1, reason: 'hello world' });
+      this.get('subscription').send({
+        receiver: user.get('id'),
+        type: 'regular',
+        value: 1,
+        reason: 'hello world'
+      });
     }
   }
 });
