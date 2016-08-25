@@ -1,0 +1,21 @@
+<div class="card-content">
+  <div class="card-content-inner trophy-container">
+    {{#each user.badges as |badge|}}
+      {{rating-list-item-badge
+        classNames="trophy"
+        badge=badge
+        deleteBadge=deleteBadge
+      }}
+    {{/each}}
+  </div>
+</div>
+<div class="card-footer">
+  <span>
+    {{fa-icon "trophy" classNames="amber-text" size="lg"}} {{user.numberOfBrosties}} Brosties
+  </span>
+</div>
+<div class="card-footer">
+  <span>
+    {{fa-icon "thumbs-up" classNames="bronze-text" size="lg"}} {{user.overallScore}} Total points
+  </span>
+</div>

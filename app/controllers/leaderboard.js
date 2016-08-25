@@ -10,7 +10,10 @@ export default Controller.extend({
 
     var subscription = consumer.subscriptions.create("PointsChannel", {
       received: (data) => {
-
+        console.log(data);
+        if (data.action === 'delete') {
+          return this.store.peekRecord('point', data.id).unloadRecord();
+        }
         let { id, receiver_id, giver_id, point_type, value, reason } = JSON.parse(data.point);
         let user = this.store.peekRecord('user', receiver_id);
         let point = this.store.createRecord('point', {
@@ -52,17 +55,21 @@ export default Controller.extend({
 
     },
     badge(user) {
-      let { store, mobile } = this;
+      let { mobile } = this;
       let subscription = this.get('subscription');
-      mobile.get('app').prompt('this outta be good...', `Giving a badge?`,
+      mobile.get('app').prompt('What\'s it for, bro?', `Giving a badge?`,
         (reason) => {
-          mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
-          subscription.send({
-            receiver: user.get('id'),
-            type: 'badge',
-            value: 10,
-            reason: reason
-          });
+          if (reason.trim().length) {
+            mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
+            subscription.send({
+              receiver: user.get('id'),
+              type: 'badge',
+              value: 10,
+              reason: reason
+            });
+          } else {
+            mobile.get('app').alert(`Badge needs a title :(`, 'No good bro');
+          }
         }
       );
     },
@@ -72,6 +79,18 @@ export default Controller.extend({
         type: 'regular',
         value: 1,
         reason: 'hello world'
+      });
+    },
+    deleteBadge(point) {
+      let { store, mobile } = this;
+      let subscription = this.get('subscription');
+      let app = mobile.get('app');
+      app.confirm('Are you sure?', 'Please confirm, meow.', () => {
+        app.alert('Badge deleted!', 'now make another one!');
+        subscription.send({
+          action: 'delete',
+          id: point.get('id')
+        });                
       });
     }
   }
