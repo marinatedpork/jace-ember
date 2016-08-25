@@ -3,6 +3,30 @@ import Ember from 'ember';
 const { Controller, computed } = Ember;
 
 export default Controller.extend({
+  cableService: Ember.inject.service('cable'),
+
+  setupSubscription: Ember.on('init', function() {
+    var consumer = this.get('cableService').createConsumer('ws://localhost:3000/websocket');
+
+    var subscription = consumer.subscriptions.create("PointsChannel", {
+      received: (data) => {
+        let { id, receiver_id, giver_id, point_type, value } = JSON.parse(data.point);
+        let user = this.store.peekRecord('user', receiver_id);
+        let point = this.store.createRecord('point', {
+          id: id,
+          receiver: receiver_id,
+          giver: giver_id,
+          type: point_type,
+          value: value
+        });
+        user.get('points').pushObject(point);
+      }
+    });
+
+    this.set('subscription', subscription);
+
+  }),
+
 	leaders: computed('model.@each.overallScore', function() {
 		return this.get('model').sortBy('overallScore').reverse();
 	}),
@@ -34,11 +58,7 @@ export default Controller.extend({
       );
     },
     rate(user) {
-      this.store.createRecord('point', {
-        receiver: user,
-        type: 'regular',
-        value: 1
-      }).save();
+      this.get('subscription').send({ receiver: user.get('id'), type: 'regular', value: 1, reason: 'hello world' });
     }
   }
 });
