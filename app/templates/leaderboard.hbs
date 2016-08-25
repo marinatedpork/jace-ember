@@ -1,0 +1,23 @@
+<div class="page">
+	<div class="page-content">
+	  <div class="content-block-title">LEADERBOARD</div>
+		<div class="list-block">
+		  <ul>
+				{{#each leaders as |user i|}}
+          {{user-list-item
+            i=i
+            user=user
+            toggleIsRating=(action "toggleIsRating")
+            isRating=user.isRating
+          }}
+          {{#liquid-if user.isRating}}
+            {{rating-list-item
+              user=user
+              rate=(action "rate")
+            }}
+          {{/liquid-if}}
+				{{/each}}
+		  </ul>
+		</div>
+	</div>
+</div>

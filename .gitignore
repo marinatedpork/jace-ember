@@ -1,0 +1,5 @@
+mirage/fixtures/users.js
+tmp/*
+dist/*
+node_modules/*
+bower_components/*

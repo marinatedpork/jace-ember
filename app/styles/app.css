@@ -1,0 +1,21 @@
+@import 'https://fonts.googleapis.com/css?family=Rajdhani';
+
+body {
+	/*font-family: 'Rajdhani', sans-serif;*/
+}
+
+li.item-content.active-state {
+	background-color: #8e8e93;
+}
+
+.amber {
+	background-color: #ffc107;
+}
+
+.lightgreen {
+  background-color: #8bc34a;
+}
+
+.green {
+	background-color: #4caf50;
+}
