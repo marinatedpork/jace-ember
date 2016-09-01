@@ -8,6 +8,8 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('leaderboard');
+  this.route('protected');
+  this.route('login');
 });
 
 export default Router;

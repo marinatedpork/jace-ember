@@ -4,34 +4,27 @@ const { Controller, computed } = Ember;
 
 export default Controller.extend({
   cableService: Ember.inject.service('cable'),
-
+  socketUrl: 'ws://localhost:3000/websocket',
   setupSubscription: Ember.on('init', function() {
-    var consumer = this.get('cableService').createConsumer('ws://localhost:3000/websocket');
-
-    var subscription = consumer.subscriptions.create("PointsChannel", {
+    let { cableService, socketUrl } = this.getProperties('cableService', 'socketUrl');
+    let consumer = cableService.createConsumer(socketUrl);
+    let subscription = consumer.subscriptions.create('PointsChannel', {
       received: (data) => {
-        console.log(data);
         if (data.action === 'delete') {
           return this.store.peekRecord('point', data.id).unloadRecord();
         }
-        let { id, receiver_id, giver_id, point_type, value, reason } = JSON.parse(data.point);
-        let user = this.store.peekRecord('user', receiver_id);
-        let point = this.store.createRecord('point', {
-          id: id,
-          receiver: receiver_id,
-          giver: giver_id,
-          reason,
-          type: point_type,
-          value
-        });
-        user.get('points').pushObject(point);
+        let { 
+          id, receiver_id: receiver, giver_id: giver, point_type: type, value, reason
+        } = JSON.parse(data.point);
+        let user = this.store.peekRecord('user', receiver);
+        let point = { id, receiver, giver, reason, type, value };
+        user.get('points').pushObject(this.store.createRecord('point', point));
       }
     });
 
     this.set('subscription', subscription);
 
   }),
-
 	leaders: computed('model.@each.overallScore', function() {
 		return this.get('model').sortBy('overallScore').reverse();
 	}),
@@ -50,9 +43,6 @@ export default Controller.extend({
       if (!wasViewing) {
         user.set('isViewing', true);
       }
-    },
-    brost(user) {
-
     },
     badge(user) {
       let { mobile } = this;
@@ -82,7 +72,7 @@ export default Controller.extend({
       });
     },
     deleteBadge(point) {
-      let { store, mobile } = this;
+      let { mobile } = this;
       let subscription = this.get('subscription');
       let app = mobile.get('app');
       app.confirm('Are you sure?', 'Please confirm, meow.', () => {

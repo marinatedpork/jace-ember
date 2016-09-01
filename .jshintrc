@@ -3,7 +3,8 @@
     "server",
     "document",
     "window",
-    "-Promise"
+    "-Promise",
+    "Framework7"
   ],
   "browser": true,
   "boss": true,
