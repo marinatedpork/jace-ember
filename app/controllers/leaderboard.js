@@ -15,7 +15,12 @@ export default Controller.extend({
           return this.store.peekRecord('point', data.id).unloadRecord();
         }
         let {
-          id, receiver_id: receiver, giver_id: giver, point_type: type, value, reason
+          id,
+          receiver_id: receiver,
+          giver_id: giver,
+          point_type: type,
+          value,
+          reason
         } = JSON.parse(data.point);
         let user = this.store.peekRecord('user', receiver);
         let point = { id, receiver, giver, reason, type, value };
@@ -57,6 +62,7 @@ export default Controller.extend({
               mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
               subscription.send({
                 receiver: user.get('id'),
+                giver: giverId,
                 type: 'badge',
                 value: 10,
                 reason: reason
