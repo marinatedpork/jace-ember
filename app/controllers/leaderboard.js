@@ -3,6 +3,7 @@ import Ember from 'ember';
 const { Controller, computed } = Ember;
 
 export default Controller.extend({
+  session: Ember.inject.service(),
   cableService: Ember.inject.service('cable'),
   socketUrl: 'ws://localhost:3000/websocket',
   setupSubscription: Ember.on('init', function() {
@@ -13,7 +14,7 @@ export default Controller.extend({
         if (data.action === 'delete') {
           return this.store.peekRecord('point', data.id).unloadRecord();
         }
-        let { 
+        let {
           id, receiver_id: receiver, giver_id: giver, point_type: type, value, reason
         } = JSON.parse(data.point);
         let user = this.store.peekRecord('user', receiver);
@@ -45,43 +46,55 @@ export default Controller.extend({
       }
     },
     badge(user) {
-      let { mobile } = this;
-      let subscription = this.get('subscription');
-      mobile.get('app').prompt('What\'s it for, bro?', `Giving a badge?`,
-        (reason) => {
-          if (reason.trim().length) {
-            mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
-            subscription.send({
-              receiver: user.get('id'),
-              type: 'badge',
-              value: 10,
-              reason: reason
-            });
-          } else {
-            mobile.get('app').alert(`Badge needs a title :(`, 'No good bro');
+      let giverId = this.get('session.currentUser.id');
+      let userId = user.get('id');
+      if (userId !== giverId) {
+        let { mobile } = this;
+        let subscription = this.get('subscription');
+        mobile.get('app').prompt('What\'s it for, bro?', 'Giving a badge?',
+          (reason) => {
+            if (reason.trim().length) {
+              mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
+              subscription.send({
+                receiver: user.get('id'),
+                type: 'badge',
+                value: 10,
+                reason: reason
+              });
+            } else {
+              mobile.get('app').alert('Badge needs a title :(', 'No good bro');
+            }
           }
-        }
-      );
+        );
+      }
     },
     rate(user) {
-      this.get('subscription').send({
-        receiver: user.get('id'),
-        type: 'regular',
-        value: 1,
-        reason: 'hello world'
-      });
+      let giverId = this.get('session.currentUser.id');
+      let userId = user.get('id');
+      if (userId !== giverId) {
+        this.get('subscription').send({
+          receiver: user.get('id'),
+          giver: giverId,
+          type: 'regular',
+          value: 1
+        });
+      }
     },
     deleteBadge(point) {
-      let { mobile } = this;
-      let subscription = this.get('subscription');
-      let app = mobile.get('app');
-      app.confirm('Are you sure?', 'Please confirm, meow.', () => {
-        app.alert('Badge deleted!', 'now make another one!');
-        subscription.send({
-          action: 'delete',
-          id: point.get('id')
-        });                
-      });
+      let giverId = point.get('giver.id');
+      let currentUserId = this.get('session.currentUser.id');
+      if (currentUserId === giverId) {
+        let { mobile } = this;
+        let subscription = this.get('subscription');
+        let app = mobile.get('app');
+        app.confirm('Are you sure?', 'Please confirm, meow.', () => {
+          app.alert('Badge deleted!', 'now make another one!');
+          subscription.send({
+            action: 'delete',
+            id: point.get('id')
+          });                
+        });
+      }
     }
   }
 });

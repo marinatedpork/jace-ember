@@ -1,10 +1,21 @@
-<h2 id="title">Welcome to Ember</h2>
-
-{{#if session.isAuthenticated}}
-  {{#link-to 'protected'}}Protected{{/link-to}}
-  <button {{action 'invalidateSession'}}>Logout</button>
-{{else}}
-  {{#link-to 'login'}}Login{{/link-to}}
-{{/if}}
-
-{{outlet}}
+<div class="navbar-through">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="left">
+        {{#if session.isAuthenticated}}
+          {{#link-to "leaderboard"}}
+            {{fa-icon "bar-graph" click=(action "leaderboard")}}
+          {{/link-to}}
+        {{/if}}
+      </div>
+      <div class="right">
+        {{#if session.isAuthenticated}}
+          {{fa-icon "sign-in" size=2 click=(action "invalidateSession")}}
+        {{else}}
+          {{fa-icon "sign-out" size=2 click=(action "login")}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  {{outlet}}
+</div>

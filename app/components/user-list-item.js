@@ -7,6 +7,10 @@ export default Component.extend({
   classNameBindings: ['isRating'],
   tagName: 'li',
   click() {
-    this.get('toggleIsRating')(this.get('user'));
+    let {
+      user,
+      toggleIsRating
+    } = this.getProperties('user', 'toggleIsRating');
+    toggleIsRating(user);
   }
 });

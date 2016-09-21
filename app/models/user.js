@@ -7,6 +7,7 @@ const { computed: { filterBy, sum, mapBy, alias } } = Ember;
 
 export default Model.extend({
 	name: attr('string'),
+	email: attr('string'),
 	phone: attr('string'),
 	color: attr('string'),
 	points: hasMany('points', { inverse: 'receiver' }),
