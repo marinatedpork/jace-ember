@@ -3,35 +3,34 @@ import Ember from 'ember';
 const { Controller, computed } = Ember;
 
 export default Controller.extend({
+  session: Ember.inject.service(),
   cableService: Ember.inject.service('cable'),
-
+  socketUrl: 'ws://localhost:3000/websocket',
   setupSubscription: Ember.on('init', function() {
-    var consumer = this.get('cableService').createConsumer('ws://localhost:3000/websocket');
-
-    var subscription = consumer.subscriptions.create("PointsChannel", {
+    let { cableService, socketUrl } = this.getProperties('cableService', 'socketUrl');
+    let consumer = cableService.createConsumer(socketUrl);
+    let subscription = consumer.subscriptions.create('PointsChannel', {
       received: (data) => {
-        console.log(data);
         if (data.action === 'delete') {
           return this.store.peekRecord('point', data.id).unloadRecord();
         }
-        let { id, receiver_id, giver_id, point_type, value, reason } = JSON.parse(data.point);
-        let user = this.store.peekRecord('user', receiver_id);
-        let point = this.store.createRecord('point', {
-          id: id,
-          receiver: receiver_id,
-          giver: giver_id,
-          reason,
-          type: point_type,
-          value
-        });
-        user.get('points').pushObject(point);
+        let {
+          id,
+          receiver_id: receiver,
+          giver_id: giver,
+          point_type: type,
+          value,
+          reason
+        } = JSON.parse(data.point);
+        let user = this.store.peekRecord('user', receiver);
+        let point = { id, receiver, giver, reason, type, value };
+        user.get('points').pushObject(this.store.createRecord('point', point));
       }
     });
 
     this.set('subscription', subscription);
 
   }),
-
 	leaders: computed('model.@each.overallScore', function() {
 		return this.get('model').sortBy('overallScore').reverse();
 	}),
@@ -51,47 +50,57 @@ export default Controller.extend({
         user.set('isViewing', true);
       }
     },
-    brost(user) {
-
-    },
     badge(user) {
-      let { mobile } = this;
-      let subscription = this.get('subscription');
-      mobile.get('app').prompt('What\'s it for, bro?', `Giving a badge?`,
-        (reason) => {
-          if (reason.trim().length) {
-            mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
-            subscription.send({
-              receiver: user.get('id'),
-              type: 'badge',
-              value: 10,
-              reason: reason
-            });
-          } else {
-            mobile.get('app').alert(`Badge needs a title :(`, 'No good bro');
+      let giverId = this.get('session.currentUser.id');
+      let userId = user.get('id');
+      if (userId !== giverId) {
+        let { mobile } = this;
+        let subscription = this.get('subscription');
+        mobile.get('app').prompt('What\'s it for, bro?', 'Giving a badge?',
+          (reason) => {
+            if (reason.trim().length) {
+              mobile.get('app').alert(`${reason} badge given!`, 'Sweet! Done.');
+              subscription.send({
+                receiver: user.get('id'),
+                giver: giverId,
+                type: 'badge',
+                value: 10,
+                reason: reason
+              });
+            } else {
+              mobile.get('app').alert('Badge needs a title :(', 'No good bro');
+            }
           }
-        }
-      );
+        );
+      }
     },
     rate(user) {
-      this.get('subscription').send({
-        receiver: user.get('id'),
-        type: 'regular',
-        value: 1,
-        reason: 'hello world'
-      });
+      let giverId = this.get('session.currentUser.id');
+      let userId = user.get('id');
+      if (userId !== giverId) {
+        this.get('subscription').send({
+          receiver: user.get('id'),
+          giver: giverId,
+          type: 'regular',
+          value: 1
+        });
+      }
     },
     deleteBadge(point) {
-      let { store, mobile } = this;
-      let subscription = this.get('subscription');
-      let app = mobile.get('app');
-      app.confirm('Are you sure?', 'Please confirm, meow.', () => {
-        app.alert('Badge deleted!', 'now make another one!');
-        subscription.send({
-          action: 'delete',
-          id: point.get('id')
-        });                
-      });
+      let giverId = point.get('giver.id');
+      let currentUserId = this.get('session.currentUser.id');
+      if (currentUserId === giverId) {
+        let { mobile } = this;
+        let subscription = this.get('subscription');
+        let app = mobile.get('app');
+        app.confirm('Are you sure?', 'Please confirm, meow.', () => {
+          app.alert('Badge deleted!', 'now make another one!');
+          subscription.send({
+            action: 'delete',
+            id: point.get('id')
+          });                
+        });
+      }
     }
   }
 });
