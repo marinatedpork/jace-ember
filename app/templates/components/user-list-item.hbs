@@ -2,8 +2,8 @@
 <div class="item-inner">
   <div class="item-title">{{user.name}}</div>
   <div class="item-after">
-    <span class="badge amber">{{user.numberOfBrosties}}</span>
-    <span class="badge silver">{{user.numberOfBadges}}</span>
-    <span class="badge bronze">{{user.numberOfRegularPoints}}</span>
+    {{user-list-item-coin-container type="brosty" value=user.numberOfBrosties}}
+    {{user-list-item-coin-container type="a-badge" value=user.numberOfBadges}}
+    {{user-list-item-coin-container type="regular" value=user.numberOfRegularPoints}}
   </div>
 </div>
