@@ -79,7 +79,7 @@ export default Controller.extend({
       let userId = user.get('id');
       if (userId !== giverId) {
         this.get('subscription').send({
-          receiver: user.get('id'),
+          receiver: userId,
           giver: giverId,
           type: 'regular',
           value: 1

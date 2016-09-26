@@ -9,13 +9,11 @@
     {{/each}}
   </div>
 </div>
-<div class="card-footer">
-  <span>
-    {{fa-icon "trophy" classNames="amber-text" size="lg"}} {{user.numberOfBrosties}} Brosties
-  </span>
+<div class="point-total card-footer">
+  <div class="bg-img pig"></div>
+  <div class="point-total-value">{{user.overallScore}} Total points</div>
 </div>
-<div class="card-footer">
-  <span>
-    {{fa-icon "thumbs-up" classNames="bronze-text" size="lg"}} {{user.overallScore}} Total points
-  </span>
+<div class="point-total card-footer">
+  <div class="bg-img brosty-trophy"></div>
+  <div class="point-total-value">{{user.numberOfBrosties}} Brosties</div>
 </div>

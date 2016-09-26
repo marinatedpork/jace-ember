@@ -1,9 +1,9 @@
 import Ember from 'ember';
 
-const { Component } = Ember;
+const { Component, computed } = Ember;
 
 export default Component.extend({
-  classNames: ['item-content'],
+  classNames: ['item-content', 'user-list-item'],
   classNameBindings: ['isRating'],
   tagName: 'li',
   click() {
