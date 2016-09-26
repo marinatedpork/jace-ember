@@ -1,23 +1,24 @@
 import Ember from 'ember';
 
-export default Ember.Controller.extend({
-  session: Ember.inject.service(),
+const { Controller, inject: { service } } = Ember;
 
+export default Controller.extend({
+  session: service(),
+  authenticator: 'authenticator:devise',
   actions: {
     authenticate() {
-      let { mobile, store } = this;
       let self = this;
       let {
         email,
         password,
-        session
-      } = this.getProperties('email', 'password', 'session');
-
-      session.authenticate('authenticator:devise', email, password).then(() => {
+        session,
+        authenticator
+      } = this.getProperties('email', 'password', 'session', 'authenticator');
+      session.authenticate(authenticator, email, password).then(() => {
         self.transitionToRoute('leaderboard');
       }, ({ errors: [ error ] }) => {
         let [ messageOne, messageTwo ] = error.split('.');
-        mobile.get('app').alert(messageOne, messageTwo);
+        self.mobile.get('app').alert(messageOne, messageTwo);
       });
     }
   }
