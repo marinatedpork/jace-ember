@@ -31,10 +31,9 @@ export default Controller.extend({
     badge(user) {
       let giver = this.get('session.currentUser.id');
       let receiver = user.get('id');
-      let badgeInput = this.get('mobile.badgeInput');
       let subscription = this.get('pointsChannel');
       if (receiver !== giver) {
-        badgeInput((reason) => {
+        this.mobile.badgeInput((reason) => {
           let point = { receiver, giver, type: 'badge', value: 10, reason };
           subscription.send({ action: 'create', point });
         });
@@ -53,9 +52,8 @@ export default Controller.extend({
       let giverId = deletedPoint.get('giver.id');
       let currentUserId = this.get('session.currentUser.id');
       let subscription = this.get('pointsChannel');
-      let confirmDeletion = this.get('mobile.confirmDeletion');
       if (currentUserId === giverId) {
-        confirmDeletion(() => {
+        this.mobile.confirmDeletion(() => {
           let point = { id: deletedPoint.get('id') };
           subscription.send({ action: 'delete', point });
         });
