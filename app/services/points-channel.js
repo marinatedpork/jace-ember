@@ -7,7 +7,6 @@ export default Service.extend({
   cable: service(),
   name: 'PointsChannel',
   url: 'ws://localhost:3000/websocket',
-  callbacks: [],
   init() {
     let { cable, url, name } = this.getProperties('cable', 'url', 'name');
     let { subscriptions } = cable.createConsumer(url);
