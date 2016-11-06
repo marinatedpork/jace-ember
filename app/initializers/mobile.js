@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import MobileClient from '../lib/mobile-client';
 
 export function initialize(application) {

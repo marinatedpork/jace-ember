@@ -1,12 +1,18 @@
+// giver: belongsTo('user', { inverse: 'pointsGiven' }),
+// receiver: belongsTo('user', { inverse: 'points' }),
+// value: attr('number'),
+// type: attr('string'),
+// reason: attr('string')
+
 import { moduleForModel, test } from 'ember-qunit';
 
 moduleForModel('point', 'Unit | Model | point', {
-  // Specify the other units that are required for this test.
-  needs: []
+  needs: [
+    'model:user'
+  ]
 });
 
 test('it exists', function(assert) {
   let model = this.subject();
-  // let store = this.store();
   assert.ok(!!model);
 });

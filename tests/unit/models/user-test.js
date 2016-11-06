@@ -1,9 +1,24 @@
+import Ember from 'ember';
 import { moduleForModel, test } from 'ember-qunit';
+import setupPoints from '../../helpers/create-points';
 
 moduleForModel('user', 'Unit | Model | user', {
   needs: ['model:point'],
   beforeEach() {
-    this.User = this.store().modelFor('user');
+    const self = this;
+    const store = self.store();
+    self.User = store.modelFor('user');
+    Ember.run(() => {
+      self.giver = store.createRecord('user', { id: 1 });
+      self.receiver = store.createRecord('user', { id: 2 });
+      self.points = [
+        ...setupPoints(1, 3, 'regular', self.subject, self.fakeReceiver, store),
+        ...setupPoints(4, 9, 'brosty', self.subject, self.fakeReceiver, store),
+        ...setupPoints(10, 11, 'badge', self.subject, self.fakeReceiver, store)
+      ];
+      self.receiver.get('points').pushObjects(self.points);
+      self.giver.get('pointsGiven').pushObjects(self.points);
+    });
   }
 });
 
@@ -39,46 +54,20 @@ test('has many pointsGiven', function(assert) {
   assert.equal(relationship.key, 'pointsGiven', 'has relationship with point');
   assert.equal(relationship.kind, 'hasMany', 'kind of relationship is hasMany');
   assert.equal(inverse, 'giver', 'inverse is giver');
+  assert.equal(this.giver.get('pointsGiven.length'), 11);
 });
 
 test('has a collection of regular points', function(assert) {
-  const store = this.store();
-  Ember.run(() => {
-    let user = store.createRecord('user', { id: 1 });
-    user.get('points').pushObjects([
-      store.createRecord('point', { id: 1, type: 'regular' }),
-      store.createRecord('point', { id: 2, type: 'regular' }),
-      store.createRecord('point', { id: 3, type: 'brosty' })
-    ]);
-    assert.equal(user.get('regularPoints.length'), 2);
-    assert.equal(user.get('numberOfRegularPoints'), 2, 'has alias for length');
-  });
+  assert.equal(this.receiver.get('regularPoints.length'), 3);
+  assert.equal(this.receiver.get('numberOfRegularPoints'), 3, 'has alias for length');
 });
 
 test('has a collection of brosty points', function(assert) {
-  const store = this.store();
-  Ember.run(() => {
-    let user = store.createRecord('user', { id: 1 });
-    user.get('points').pushObjects([
-      store.createRecord('point', { id: 1, type: 'regular' }),
-      store.createRecord('point', { id: 2, type: 'brosty' }),
-      store.createRecord('point', { id: 3, type: 'brosty' })
-    ]);
-    assert.equal(user.get('brosties.length'), 2);
-    assert.equal(user.get('numberOfBrosties'), 2, 'has alias for length');
-  });
+  assert.equal(this.receiver.get('brosties.length'), 6);
+  assert.equal(this.receiver.get('numberOfBrosties'), 6, 'has alias for length');
 });
 
 test('has a collection of badge points', function(assert) {
-  const store = this.store();
-  Ember.run(() => {
-    let user = store.createRecord('user', { id: 1 });
-    user.get('points').pushObjects([
-      store.createRecord('point', { id: 1, type: 'regular' }),
-      store.createRecord('point', { id: 2, type: 'badge' }),
-      store.createRecord('point', { id: 3, type: 'badge' })
-    ]);
-    assert.equal(user.get('badges.length'), 2);
-    assert.equal(user.get('numberOfBadges'), 2, 'has alias for length');
-  });
+  assert.equal(this.receiver.get('badges.length'), 2);
+  assert.equal(this.receiver.get('numberOfBadges'), 2, 'has alias for length');
 });
